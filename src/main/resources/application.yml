@@ -19,3 +19,15 @@ spring:
   flyway:
     enabled: true
     locations: classpath:db/migration
+
+jwt:
+  secret: ${JWT_SECRET:3SRc2bDRibfj92LJfSX0Jtel2z9PVRI8XhRtwhCab2s=}
+  access-token-expiration: 900000
+  refresh-token-expiration: 604800000
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
