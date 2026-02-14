@@ -1,14 +1,13 @@
-FROM maven:3.9.12-eclipse-temurin-25 AS builder
+FROM maven:3.9.12-eclipse-temurin-21 AS builder
 WORKDIR /app
 
 COPY pom.xml .
-RUN mvn -B -ntp -DskipTests dependency:resolve
-
 COPY src ./src
 RUN mvn -B -ntp -DskipTests clean package
 
-FROM eclipse-temurin:25-jre
+FROM eclipse-temurin:21-jre
 WORKDIR /app
 COPY --from=builder /app/target/*.jar app.jar
+
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]

@@ -1,8 +1,8 @@
-version: "3.1"
+version: "3.8"
 
 services:
   database:
-    image: postgres
+    image: postgres:16-alpine
     restart: always
     ports:
       - "5432:5432"
@@ -11,12 +11,14 @@ services:
       POSTGRES_PASSWORD: secret123
       POSTGRES_DB: rotation
     volumes:
-      - database-data:/var/lib/postgresql
+      - database-data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
       timeout: 5s
       retries: 5
+    networks:
+      - app-network
 
   app:
     build: .
@@ -30,9 +32,11 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://database:5432/rotation
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: secret123
+    networks:
+      - app-network
 
   pgadmin:
-    image: dpage/pgadmin4
+    image: dpage/pgadmin4:latest
     restart: always
     ports:
       - "5050:80"
@@ -44,7 +48,13 @@ services:
     depends_on:
       database:
         condition: service_healthy
+    networks:
+      - app-network
 
 volumes:
   database-data:
   pgadmin-data:
+
+networks:
+  app-network:
+    driver: bridge
